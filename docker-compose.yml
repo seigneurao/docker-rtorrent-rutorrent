@@ -1,0 +1,15 @@
+version: '3'
+services:
+  rtorrent-rutorrent:
+    container_name: rtorrent-rutorrent
+    image: rtorrent-rutorrent:latest
+    restart: always
+    build: .
+    ports:
+      - "80:80"
+      - "5050:5050"
+      - "58282:58282"
+    volumes:
+      - /rtorrent/downloads:/downloads
+    command: /root/startup.sh
+    tty: true

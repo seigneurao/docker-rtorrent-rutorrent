@@ -1,0 +1,35 @@
+server {
+	listen 80;
+	listen [::]:80 ipv6only=on;
+
+	root /var/www/rutorrent;
+	index index.php index.html index.htm;
+
+	server_name localhost 195.154.161.54;
+	
+	# Allow larger .torrent files to upload.
+	# If experiencing a "413 Request Entity Too Large" error,
+	# feel free to increase this setting. 
+	client_max_body_size 2M;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+                auth_basic "Restricted";
+                auth_basic_user_file /etc/nginx/.htpasswd;
+	}
+	
+	location /RPC2 {
+		include scgi_params;
+		scgi_pass 127.0.0.1:5050;
+	}
+
+	location ~ \.php$ {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_pass 127.0.0.1:9000; 
+		fastcgi_index index.php;
+		include fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	}
+}
