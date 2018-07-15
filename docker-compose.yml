@@ -10,6 +10,6 @@ services:
       - "5050:5050"
       - "58282:58282"
     volumes:
-      - /rtorrent/downloads:/downloads
+      - /rtorrent:/rtorrent
     command: /root/startup.sh
     tty: true
