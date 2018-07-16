@@ -97,6 +97,12 @@ method.insert = d.data_path, simple,\
 method.insert = d.session_file, simple, "cat=(session.path), (d.hash), .torrent"
 
 
+## Move torrent when finished
+method.insert = d.get_finished_dir, simple, "cat=(cfg.download),$d.custom1="
+method.insert = d.move_to_complete, simple, "d.directory.set=$argument.1=; execute=mkdir,-p,$argument.1=; execute=mv,-u,$argument.0=,$argument.1=; d.save_full_session="
+method.set_key = event.download.finished,move_complete,"d.move_to_complete=$d.data_path=,$d.get_finished_dir="
+
+
 ## Watch directories (add more as you like, but use unique schedule names)
 ## Add torrent
 schedule2 = watch_load, 11, 10, ((load.verbose, (cat, (cfg.watch), "load/*.torrent")))
