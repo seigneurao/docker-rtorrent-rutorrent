@@ -8,12 +8,13 @@
 
 
 ## Instance layout (base paths)
-method.insert = cfg.basedir,  private|const|string, (cat,"/rtorrent/")
-method.insert = cfg.download, private|const|string, (cat,(cfg.basedir),"download/")
-method.insert = cfg.logs,     private|const|string, (cat,(cfg.basedir),"log/")
-method.insert = cfg.logfile,  private|const|string, (cat,(cfg.logs),"rtorrent-",(system.time),".log")
-method.insert = cfg.session,  private|const|string, (cat,(cfg.basedir),".session/")
-method.insert = cfg.watch,    private|const|string, (cat,(cfg.basedir),"watch/")
+method.insert = cfg.basedir,  	private|const|string, (cat,"/rtorrent/")
+method.insert = cfg.download, 	private|const|string, (cat,(cfg.basedir),"download/")
+method.insert = cfg.completed,	private|const|string, (cat,(cfg.download),"completed/")
+method.insert = cfg.logs,     	private|const|string, (cat,(cfg.basedir),"log/")
+method.insert = cfg.logfile,  	private|const|string, (cat,(cfg.logs),"rtorrent-",(system.time),".log")
+method.insert = cfg.session,  	private|const|string, (cat,(cfg.basedir),".session/")
+method.insert = cfg.watch,    	private|const|string, (cat,(cfg.basedir),"watch/")
 
 
 ## Create instance directories
@@ -98,8 +99,9 @@ method.insert = d.session_file, simple, "cat=(session.path), (d.hash), .torrent"
 
 
 ## Move torrent when finished
-method.insert = d.get_finished_dir, simple, "cat=(cfg.download),$d.custom1="
-method.insert = d.move_to_complete, simple, "d.directory.set=$argument.1=; execute=mkdir,-p,$argument.1=; execute=mv,-u,$argument.0=,$argument.1=; d.save_full_session="
+method.insert = d.get_finished_dir, simple, "cat=(cfg.completed),$d.custom1="
+#method.insert = d.move_to_complete, simple, "d.directory.set=$argument.1=; execute=mkdir,-p,$argument.1=; execute=mv,-u,$argument.0=,$argument.1=; d.save_full_session="
+method.insert = d.move_to_complete, simple, "execute=mkdir,-p,$argument.1=; execute=cp,-rp,$argument.0=,$argument.1=; d.stop=; d.directory.set=$argument.1=; d.start=;d.save_full_session=; execute=rm, -r, $argument.0="
 method.set_key = event.download.finished,move_complete,"d.move_to_complete=$d.data_path=,$d.get_finished_dir="
 
 
